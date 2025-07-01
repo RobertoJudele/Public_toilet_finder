@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.toiletfinder.app">
+
+    <!-- Permissions required for Google Maps and network access -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application
+            android:allowBackup="true"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:theme="@style/Theme.ToiletFinder"
+            tools:replace="android:allowBackup,android:label,android:supportsRtl,android:theme">
+
+        <!-- REQUIRED: Google Maps API Key -->
+        <!-- Use the key from your Google Cloud Console screenshot -->
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyCn190DZpLx64Csufw_pyvLSViIu9muf9g" />
+
+        <activity
+                android:name=".MainActivity"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>
+    

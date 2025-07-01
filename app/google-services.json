@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "903363877337",
+    "project_id": "public-toilet-finder-f6745",
+    "storage_bucket": "public-toilet-finder-f6745.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903363877337:android:216a33d6f4de25bbace1c8",
+        "android_client_info": {
+          "package_name": "com.toiletfinder.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoZvByFKZaVYmLwMIoIF2WTVlYu62NvEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
