@@ -47,6 +47,9 @@ fun MapScreen(
                     ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         )
     }
+    var showAddReviewDialog by remember { mutableStateOf(false) }
+
+
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -58,7 +61,12 @@ fun MapScreen(
     var selectedToilet by remember { mutableStateOf<Toilet?>(null) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-
+    if (showAddReviewDialog && selectedToilet != null) {
+        AddReviewDialog(
+            toiletId = selectedToilet!!.id,
+            onDismiss = { showAddReviewDialog = false }
+        )
+    }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.Builder()
             .target(LatLng(44.4268, 26.1025))
@@ -150,9 +158,14 @@ fun MapScreen(
                     onDismissRequest = {
                         scope.launch { sheetState.hide() }
                         selectedToilet = null
+                    },
+                    onAddReviewClick = {
+                        // TODO: Show your review dialog or navigate to add review screen
+                        showAddReviewDialog = true  // <-- make sure this state exists
                     }
                 )
             }
+
         }
     }
 }
