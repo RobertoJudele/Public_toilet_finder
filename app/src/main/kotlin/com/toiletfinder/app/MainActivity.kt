@@ -68,7 +68,7 @@ fun ToiletFinderApp() {
                 }
             ) {
                 when (selectedScreen) {
-                    "Map" -> MapScreen()
+                    "Map" -> MapScreen(onAddToiletClick = { selectedScreen = "AddToilet" })
                     "Backend" -> BackendTestScreen()
                     "AddToilet" -> AddToiletScreen(onToiletAdded = { selectedScreen = "Map" })
                     "Home" -> Text("🏠 Home Screen")
