@@ -18,7 +18,11 @@ import com.toiletfinder.app.data.model.Toilet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToiletDetailsSheet(toilet: Toilet, onDismissRequest: () -> Unit) {
+fun ToiletDetailsSheet(
+    toilet: Toilet,
+    onDismissRequest: () -> Unit,
+    onAddReviewClick: () -> Unit // NEW callback
+) {
     val context = LocalContext.current
 
     ModalBottomSheet(onDismissRequest = onDismissRequest) {
@@ -43,7 +47,7 @@ fun ToiletDetailsSheet(toilet: Toilet, onDismissRequest: () -> Unit) {
                         .fillMaxWidth()
                         .height(200.dp)
                         .clip(MaterialTheme.shapes.medium),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Crop
                 )
                 Spacer(Modifier.height(16.dp))
             }
@@ -57,72 +61,57 @@ fun ToiletDetailsSheet(toilet: Toilet, onDismissRequest: () -> Unit) {
                 Spacer(Modifier.height(8.dp))
             }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Rating: ", style = MaterialTheme.typography.titleMedium)
-                Text(text = "%.1f".format(toilet.rating), style = MaterialTheme.typography.bodyLarge)
-                Spacer(Modifier.width(8.dp))
-            }
-            Spacer(Modifier.height(4.dp))
+            InfoRow(label = "Rating:", value = "%.1f".format(toilet.rating))
+            InfoRow(label = "Accessible:", value = if (toilet.accessible) "Yes" else "No")
+            InfoRow(label = "Free:", value = if (toilet.free) "Yes" else "No")
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Accessible: ", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    text = if (toilet.accessible) "Yes" else "No",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            Spacer(Modifier.height(4.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Free: ", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    text = if (toilet.free) "Yes" else "No",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
             Spacer(Modifier.height(24.dp))
 
-            // Button to open location in Google Maps
+            // Google Maps Button
             Button(
                 onClick = {
-                    // Method 1: Use 'geo:latitude,longitude' for a direct pin, no search.
-                    val gmmIntentUri = Uri.parse("geo:${toilet.location.latitude},${toilet.location.longitude}")
-
-                    // Method 2: For a named marker with specific coordinates, use a 'q' parameter with just the name
-                    // and let it infer the location. Less reliable for exact pin placement.
-                    // val gmmIntentUri = Uri.parse("geo:0,0?q=${toilet.location.latitude},${toilet.location.longitude}(${Uri.encode(toilet.name)})")
-
-                    // Method 3: Use the 'maps.google.com' URL which is more robust for place IDs or direct pins with labels.
-                    // This is generally the most reliable for consistent behavior across devices.
                     val mapsUrl = "https://www.google.com/maps/search/?api=1&query=${toilet.location.latitude},${toilet.location.longitude}"
-                    val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(mapsUrl))
-
-
-                    mapIntent.setPackage("com.google.android.apps.maps") // Explicitly target Google Maps app
+                    val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(mapsUrl)).apply {
+                        setPackage("com.google.android.apps.maps")
+                    }
 
                     if (mapIntent.resolveActivity(context.packageManager) != null) {
                         context.startActivity(mapIntent)
                     } else {
-                        // Fallback: If Google Maps app is not installed, open in web browser
-                        val webIntentUri = Uri.parse("https://maps.google.com/?q=${toilet.location.latitude},${toilet.location.longitude}")
-                        val webMapIntent = Intent(Intent.ACTION_VIEW, webIntentUri)
-                        context.startActivity(webMapIntent)
+                        val fallbackUrl = Uri.parse("https://maps.google.com/?q=${toilet.location.latitude},${toilet.location.longitude}")
+                        context.startActivity(Intent(Intent.ACTION_VIEW, fallbackUrl))
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Open in Google Maps")
             }
+
+            Spacer(Modifier.height(16.dp))
+
+            // Add Review Button
+            Button(
+                onClick = onAddReviewClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add Review")
+            }
+
             Spacer(Modifier.height(16.dp))
         }
+    }
+}
+
+@Composable
+private fun InfoRow(label: String, value: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp)
+    ) {
+        Text(text = label, style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.width(8.dp))
+        Text(text = value, style = MaterialTheme.typography.bodyLarge)
     }
 }

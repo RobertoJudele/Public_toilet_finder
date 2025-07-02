@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.toiletfinder.app.ui.AboutScreen
 import com.toiletfinder.app.ui.MapScreen
 import com.toiletfinder.app.ui.BackendTestScreen
 import com.toiletfinder.app.ui.LoginScreen
@@ -73,6 +74,7 @@ fun ToiletFinderApp() {
                     "AddToilet" -> AddToiletScreen(onToiletAdded = { selectedScreen = "Map" })
                     "Home" -> Text("🏠 Home Screen")
                     "Settings" -> Text("⚙️ Settings")
+                    "About" -> AboutScreen(onBackClick = { selectedScreen = "Map" })
                     else -> Text("🚧 Screen not implemented: $selectedScreen")
                 }
             }
