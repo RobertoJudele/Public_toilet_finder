@@ -37,6 +37,7 @@ fun SidebarLayout(
 
     val buttons = listOf(
         "Home" to "🏠",
+        "Login" to "🔐",c
         "Map" to "🗺️",
         "Backend" to "🧪",
         "Settings" to "⚙️",
