@@ -5,9 +5,6 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="fillFormAndTapSubmit_showsLoadingIndicator()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="mapScreen_displaysTitleAndFab_andFabClickCallsCallback()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -15,6 +12,12 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="fabClick_invokesCallback()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="toiletDetails_showsLoadingIndicatorWhileFetching()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="toiletDetails_showsNameAndAddReviewButton()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
