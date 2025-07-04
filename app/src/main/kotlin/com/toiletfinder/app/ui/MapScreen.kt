@@ -32,6 +32,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Composable
+fun MapScreenFab(onFabClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = onFabClick,
+        modifier = Modifier
+            .padding(16.dp),
+        content = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Toilet"
+            )
+        }
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -132,13 +147,13 @@ fun MapScreen(
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-
         // 🚀 Floating Action Button to Add Toilet
         FloatingActionButton(
             onClick = onAddToiletClick,
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(16.dp)
+                .padding(16.dp),
+
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Add Toilet")
         }
@@ -167,6 +182,7 @@ fun MapScreen(
             }
 
         }
+        MapScreenFab(onFabClick = onAddToiletClick)
     }
 }
 

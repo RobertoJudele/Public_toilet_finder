@@ -19,7 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.toiletfinder.app.data.model.Toilet
 import java.util.*
-
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 @Composable
 fun AddToiletScreen(
     onToiletAdded: () -> Unit
@@ -133,6 +135,18 @@ fun AddToiletScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(if (isSubmitting) "Submitting..." else "Submit")
+        }
+
+        // Show loading indicator *inside* the Column, so .align works
+        if (isSubmitting) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 16.dp)
+                    .semantics{contentDescription="Loading"},
+
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
         error?.let {
