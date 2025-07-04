@@ -9,11 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onBackClick: () ->Unit
 ) {
     val auth = remember { FirebaseAuth.getInstance() }
     var email by remember { mutableStateOf("") }
@@ -29,6 +32,10 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        IconButton(onClick = { onBackClick() }) {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        }
+
         Text(if (isRegisterMode) "Register" else "Login", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(24.dp))

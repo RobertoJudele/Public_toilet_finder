@@ -51,7 +51,10 @@ fun ToiletFinderApp() {
             LoginScreen(onLoginSuccess = {
                 selectedScreen = pendingProtectedScreen ?: "Map"
                 pendingProtectedScreen = null
-            })
+            },
+                onBackClick = { selectedScreen = "Map" }
+            )
+
         } else {
             SidebarLayout(
                 isDarkMode = isDarkMode,
