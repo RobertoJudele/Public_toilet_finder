@@ -76,6 +76,12 @@ android {
     kotlinOptions {
         jvmTarget = "17" // Align with Java compatibility.
     }
+    packaging {
+        resources {
+            excludes.add("/META-INF/LICENSE.md")
+            excludes.add("/META-INF/LICENSE-notice.md")
+        }
+    }
 }
 
 // Define project dependencies.
@@ -117,6 +123,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     // KAPT annotation processor for Glide.
     kapt("com.github.bumptech.glide:compiler:4.16.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 
     // Testing dependencies.
     testImplementation("junit:junit:4.13.2")
@@ -124,7 +131,25 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    testImplementation ("org.jetbrains.kotlin:kotlin-test:1.8.22")
 
+    // For unit tests
+    testImplementation ("io.mockk:mockk:1.13.8")
+    testImplementation ("org.slf4j:slf4j-simple:2.0.7")
+
+    testImplementation ("org.mockito:mockito-core:5.11.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
+// For Android instrumented tests (if you want)
+    androidTestImplementation ("io.mockk:mockk-android:1.13.5")
+
+// For coroutine testing
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+// JUnit
+    testImplementation ("junit:junit:4.13.2")
+    androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
     // Google Maps and Compose Maps integration.
     implementation("com.google.maps.android:maps-compose:3.1.0") // Compose Maps library.
     implementation("com.google.android.gms:play-services-maps:18.2.0") // Core Google Play Services Maps SDK.
@@ -134,6 +159,7 @@ dependencies {
     // Android Lifecycle ViewModel support for Compose.
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
+    testImplementation(kotlin("test"))
 }
 
 // Apply the Google Services plugin. This line must be at the very bottom of the file.

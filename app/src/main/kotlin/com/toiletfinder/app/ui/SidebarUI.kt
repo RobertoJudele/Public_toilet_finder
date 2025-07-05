@@ -50,7 +50,6 @@ fun SidebarLayout(
         }
     }
 
-
     Row(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
         // Sidebar
         Column(
