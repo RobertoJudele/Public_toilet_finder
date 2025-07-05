@@ -64,8 +64,6 @@ fun MapScreen(
     }
     var showAddReviewDialog by remember { mutableStateOf(false) }
 
-
-
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -74,17 +72,22 @@ fun MapScreen(
     }
 
     var selectedToilet by remember { mutableStateOf<Toilet?>(null) }
+    var searchQuery by remember { mutableStateOf("") }  // <-- Add a state for the search query
+    val filteredToilets = toilets.filter { it.name.contains(searchQuery, ignoreCase = true) }
+
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+
     if (showAddReviewDialog && selectedToilet != null) {
         AddReviewDialog(
             toiletId = selectedToilet!!.id,
             onDismiss = { showAddReviewDialog = false }
         )
     }
+
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.Builder()
-            .target(LatLng(44.4268, 26.1025))
+            .target(LatLng(44.4268, 26.1025)) // Default camera position
             .zoom(12f)
             .build()
     }
@@ -102,60 +105,60 @@ fun MapScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled = true,
-                myLocationButtonEnabled = true
-            ),
-            properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
-            onMapClick = {
-                if (sheetState.isVisible) {
-                    scope.launch { sheetState.hide() }
-                    selectedToilet = null
-                }
-            }
-        ) {
-            Log.d("MapScreen", "Number of toilets: ${toilets.size}")
-            toilets.forEach { toilet ->
-                val latLng = LatLng(toilet.location.latitude, toilet.location.longitude)
-                MarkerInfoWindow(
-                    state = rememberMarkerState(position = latLng),
-                    title = toilet.name,
-                    snippet = "Rating: %.1f | %s".format(
-                        toilet.rating,
-                        if (toilet.accessible) "Accessible" else "Not accessible"
-                    ),
-                    icon = loadMarkerIcon(context, toilet),
-                    onClick = {
-                        selectedToilet = toilet
-                        scope.launch { sheetState.show() }
-                        true
-                    },
-                    onInfoWindowClick = {
-                        selectedToilet = toilet
-                        scope.launch { sheetState.show() }
-                        true
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Search Bar
+            TextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search Toilets") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                singleLine = true
+            )
+
+            // GoogleMap with filtered toilets
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                uiSettings = MapUiSettings(
+                    zoomControlsEnabled = true,
+                    myLocationButtonEnabled = true
+                ),
+                properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
+                onMapClick = {
+                    if (sheetState.isVisible) {
+                        scope.launch { sheetState.hide() }
+                        selectedToilet = null
                     }
-                ) {
-                    Text("${toilet.name}\nRating: %.1f".format(toilet.rating))
+                }
+            ) {
+                filteredToilets.forEach { toilet ->
+                    val latLng = LatLng(toilet.location.latitude, toilet.location.longitude)
+                    MarkerInfoWindow(
+                        state = rememberMarkerState(position = latLng),
+                        title = toilet.name,
+                        snippet = "Rating: %.1f | %s".format(
+                            toilet.rating,
+                            if (toilet.accessible) "Accessible" else "Not accessible"
+                        ),
+                        icon = loadMarkerIcon(context, toilet),
+                        onClick = {
+                            selectedToilet = toilet
+                            scope.launch { sheetState.show() }
+                            true
+                        },
+                        onInfoWindowClick = {
+                            selectedToilet = toilet
+                            scope.launch { sheetState.show() }
+                            true
+                        }
+                    ) {
+                        Text("${toilet.name}\nRating: %.1f".format(toilet.rating))
+                    }
                 }
             }
-        }
 
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-        // 🚀 Floating Action Button to Add Toilet
-        FloatingActionButton(
-            onClick = onAddToiletClick,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(16.dp),
-
-        ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Add Toilet")
         }
     }
 
@@ -175,12 +178,10 @@ fun MapScreen(
                         selectedToilet = null
                     },
                     onAddReviewClick = {
-                        // TODO: Show your review dialog or navigate to add review screen
-                        showAddReviewDialog = true  // <-- make sure this state exists
+                        showAddReviewDialog = true
                     }
                 )
             }
-
         }
         MapScreenFab(onFabClick = onAddToiletClick)
     }
