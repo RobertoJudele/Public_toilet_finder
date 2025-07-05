@@ -32,6 +32,7 @@ fun SidebarLayout(
         label = "sidebarWidth"
     )
 
+    // Set the background and text color based on the theme
     val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color.White
     val sidebarBackground = if (isDarkMode) Color(0xFF2B2B2B) else Color.White
     val textColor = if (isDarkMode) Color.White else Color.Black

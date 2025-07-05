@@ -33,6 +33,8 @@ fun AddToiletScreen(
     var description by remember { mutableStateOf("") }
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
+    var accessible by remember { mutableStateOf(false) }  // Accessible checkbox state
+    var free by remember { mutableStateOf(false) }  // Free checkbox state
     var isSubmitting by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -54,13 +56,44 @@ fun AddToiletScreen(
         }
     }
 
+    // Validation function
+    fun validateFields(): Boolean {
+        // Check if fields are non-empty
+        if (name.isBlank()) {
+            error = "Title cannot be empty."
+            return false
+        }
+
+        if (description.isBlank()) {
+            error = "Description cannot be empty."
+            return false
+        }
+
+        if (!accessible && !free) {
+            error = "Please specify if the toilet is accessible and/or free."
+            return false
+        }
+
+        // Validate coordinates
+        val lat = latitude.toDoubleOrNull()
+        val lon = longitude.toDoubleOrNull()
+
+        if (lat == null || lon == null || lat !in -90.0..90.0 || lon !in -180.0..180.0) {
+            error = "Invalid coordinates. Please enter valid latitude and longitude."
+            return false
+        }
+
+        error = null  // Reset any existing error
+        return true
+    }
+
     Column(modifier = Modifier.padding(16.dp)) {
         Text("🚽 Add a Public Toilet", style = MaterialTheme.typography.headlineSmall)
 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
+            label = { Text("Title") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -91,6 +124,7 @@ fun AddToiletScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Button to use current location
         Button(
             onClick = { fetchLocation() },
             modifier = Modifier.fillMaxWidth()
@@ -100,36 +134,62 @@ fun AddToiletScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Accessible checkbox
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = accessible,
+                onCheckedChange = { accessible = it }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Accessible")
+        }
+
+        // Free checkbox
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = free,
+                onCheckedChange = { free = it }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Free")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Submit Button
         Button(
             onClick = {
-                isSubmitting = true
-                error = null
-                val toilet = Toilet(
-                    id = UUID.randomUUID().toString(),
-                    name = name,
-                    description = description,
-                    location = GeoPoint(
-                        latitude.toDoubleOrNull() ?: 0.0,
-                        longitude.toDoubleOrNull() ?: 0.0
-                    ),
-                    accessible = false,
-                    free = true,
-                    rating = 0.0,
-                    photoUrl = ""
-                )
+                if (validateFields()) {
+                    isSubmitting = true
+                    error = null
 
-                FirebaseFirestore.getInstance()
-                    .collection("toilets")
-                    .document(toilet.id)
-                    .set(toilet)
-                    .addOnSuccessListener {
-                        isSubmitting = false
-                        onToiletAdded()
-                    }
-                    .addOnFailureListener {
-                        isSubmitting = false
-                        error = it.message
-                    }
+                    val toilet = Toilet(
+                        id = UUID.randomUUID().toString(),
+                        name = name,
+                        description = description,
+                        location = GeoPoint(
+                            latitude.toDouble(),
+                            longitude.toDouble()
+                        ),
+                        accessible = accessible,
+                        free = free,
+                        rating = 0.0,
+                        photoUrl = ""  // Assume no photo URL initially
+                    )
+
+                    FirebaseFirestore.getInstance()
+                        .collection("toilets")
+                        .document(toilet.id)
+                        .set(toilet)
+                        .addOnSuccessListener {
+                            isSubmitting = false
+                            onToiletAdded()
+                        }
+                        .addOnFailureListener {
+                            isSubmitting = false
+                            error = it.message
+                        }
+                }
             },
             enabled = !isSubmitting,
             modifier = Modifier.fillMaxWidth()
@@ -143,12 +203,12 @@ fun AddToiletScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp)
-                    .semantics{contentDescription="Loading"},
-
+                    .semantics { contentDescription = "Loading" },
                 color = MaterialTheme.colorScheme.primary
             )
         }
 
+        // Display error message if exists
         error?.let {
             Spacer(modifier = Modifier.height(12.dp))
             Text("Error: $it", color = MaterialTheme.colorScheme.error)

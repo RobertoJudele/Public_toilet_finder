@@ -16,6 +16,7 @@ import com.toiletfinder.app.data.firebase.ReviewRepo
 import com.toiletfinder.app.data.model.Review
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.Row
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -23,28 +24,51 @@ fun AddReviewDialog(
     toiletId: String,
     onDismiss: () -> Unit
 ) {
+    val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: "anonymous"
     var rating by remember { mutableStateOf("") }
     var comment by remember { mutableStateOf("") }
+    var ratingError by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = MaterialTheme.shapes.medium,
             tonalElevation = 8.dp,
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Add Review", style = MaterialTheme.typography.titleLarge)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                // Show user email
+                Text(
+                    text = "Reviewing as: $currentUserEmail",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 TextField(
                     value = rating,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) rating = it },
-                    label = { Text("Rating (0-5)") },
+                    onValueChange = {
+                        if (it.all { c -> c.isDigit() }) {
+                            rating = it
+                            ratingError = false
+                        }
+                    },
+                    label = { Text("Rating (1-5)") },
+                    isError = ratingError,
                     singleLine = true
                 )
+
+                if (ratingError) {
+                    Text(
+                        "Please enter a rating between 1 and 5",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -63,10 +87,16 @@ fun AddReviewDialog(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
+                        val ratingValue = rating.toIntOrNull()
+                        if (ratingValue == null || ratingValue !in 1..5) {
+                            ratingError = true
+                            return@Button
+                        }
+
                         val review = Review(
-                            userId = "temp-user", // Replace with actual user ID
+                            userId = currentUserEmail,
                             toiletId = toiletId,
-                            rating = rating.toIntOrNull() ?: 0,
+                            rating = ratingValue,
                             comment = comment
                         )
                         coroutineScope.launch {
