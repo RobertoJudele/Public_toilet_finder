@@ -55,6 +55,7 @@ fun ToiletFinderApp() {
     val lightColors = lightColorScheme()
     val darkColors = darkColorScheme()
 
+
     // Color Scheme for Light Mode
     fun lightColorScheme() = lightColorScheme(
         primary = Color(0xFF6200EE),
@@ -94,6 +95,7 @@ fun ToiletFinderApp() {
                             "Logout" -> {
                                 auth.signOut()
                                 currentUser = null
+
                                 selectedScreen = "Map"
                             }
                             "AddToilet" -> {
@@ -116,9 +118,15 @@ fun ToiletFinderApp() {
                             }
                         }
                     }
+
                 ) {
                     when (selectedScreen) {
-                        "Map" -> MapScreen(onAddToiletClick = { selectedScreen = "AddToilet" })
+                        Map" -> MapScreen(onAddToiletClick = { if (currentUser == null) {
+                        selectedScreen = "Login"
+                        pendingProtectedScreen = "AddToilet"
+                    } else {
+                        selectedScreen = "AddToilet"
+                    } })
                         "Backend" -> BackendTestScreen()
                         "AddToilet" -> AddToiletScreen(onToiletAdded = { selectedScreen = "Map" })
                         "Home" -> Text("🏠 Home Screen")

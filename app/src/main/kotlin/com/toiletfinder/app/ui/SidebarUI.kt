@@ -38,7 +38,6 @@ fun SidebarLayout(
     val textColor = if (isDarkMode) Color.White else Color.Black
 
     val buttons = buildList {
-        add("Home" to "🏠")
         if (!isUserLoggedIn) {
             add("Login" to "🔐")
         }
