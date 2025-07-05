@@ -121,7 +121,7 @@ fun ToiletFinderApp() {
 
                 ) {
                     when (selectedScreen) {
-                        Map" -> MapScreen(onAddToiletClick = { if (currentUser == null) {
+                        "Map" -> MapScreen(onAddToiletClick = { if (currentUser == null) {
                         selectedScreen = "Login"
                         pendingProtectedScreen = "AddToilet"
                     } else {
