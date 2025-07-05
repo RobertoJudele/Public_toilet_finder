@@ -43,12 +43,14 @@ class MainActivity : ComponentActivity() {
 fun ToiletFinderApp() {
     var isDarkMode by remember { mutableStateOf(true) }
     val auth = remember { FirebaseAuth.getInstance() }
+    var currentUser by remember { mutableStateOf(auth.currentUser) }
     var selectedScreen by remember { mutableStateOf("Map") }
     var pendingProtectedScreen by remember { mutableStateOf<String?>(null) }
 
     Surface(color = MaterialTheme.colorScheme.background) {
         if (selectedScreen == "Login") {
             LoginScreen(onLoginSuccess = {
+                currentUser = auth.currentUser
                 selectedScreen = pendingProtectedScreen ?: "Map"
                 pendingProtectedScreen = null
             },
@@ -58,16 +60,33 @@ fun ToiletFinderApp() {
         } else {
             SidebarLayout(
                 isDarkMode = isDarkMode,
+                isUserLoggedIn = currentUser != null,
                 onToggleTheme = { isDarkMode = !isDarkMode },
                 onScreenSelected = {
-                    if (it == "Logout") {
-                        auth.signOut()
-                        selectedScreen = "Map"
-                    } else if (it == "AddToilet" && auth.currentUser == null) {
-                        pendingProtectedScreen = "AddToilet"
-                        selectedScreen = "Login"
-                    } else {
-                        selectedScreen = it
+                    when (it) {
+                        "Logout" -> {
+                            auth.signOut()
+                            currentUser = null
+                            selectedScreen = "Map"
+                        }
+                        "AddToilet" -> {
+                            if (auth.currentUser == null) {
+                                pendingProtectedScreen = "AddToilet"
+                                selectedScreen = "Login"
+                            } else {
+                                selectedScreen = "AddToilet"
+                            }
+                        }
+                        "Login" -> {
+                            if (auth.currentUser != null) {
+                                selectedScreen = "Map"
+                            } else {
+                                selectedScreen = "Login"
+                            }
+                        }
+                        else -> {
+                            selectedScreen = it
+                        }
                     }
                 }
             ) {
