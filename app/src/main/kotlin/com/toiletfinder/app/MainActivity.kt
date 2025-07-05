@@ -70,7 +70,7 @@ fun ToiletFinderApp() {
                             selectedScreen = "Map"
                         }
                         "AddToilet" -> {
-                            if (auth.currentUser == null) {
+                            if (currentUser == null) {
                                 pendingProtectedScreen = "AddToilet"
                                 selectedScreen = "Login"
                             } else {
@@ -78,7 +78,7 @@ fun ToiletFinderApp() {
                             }
                         }
                         "Login" -> {
-                            if (auth.currentUser != null) {
+                            if (currentUser != null) {
                                 selectedScreen = "Map"
                             } else {
                                 selectedScreen = "Login"
@@ -91,7 +91,12 @@ fun ToiletFinderApp() {
                 }
             ) {
                 when (selectedScreen) {
-                    "Map" -> MapScreen(onAddToiletClick = { selectedScreen = "AddToilet" })
+                    "Map" -> MapScreen(onAddToiletClick = { if (currentUser == null) {
+                        selectedScreen = "Login"
+                        pendingProtectedScreen = "AddToilet"
+                    } else {
+                        selectedScreen = "AddToilet"
+                    } })
                     "Backend" -> BackendTestScreen()
                     "AddToilet" -> AddToiletScreen(onToiletAdded = { selectedScreen = "Map" })
                     "Home" -> Text("🏠 Home Screen")
