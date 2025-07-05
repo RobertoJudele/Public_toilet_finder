@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.toiletfinder.app.data.firebase.ReviewRepo
@@ -116,7 +117,7 @@ fun ToiletDetailsSheet(
             Text("Reviews", style = MaterialTheme.typography.titleMedium)
 
             if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+                CircularProgressIndicator(modifier = Modifier.padding(8.dp).testTag("LoadingIndicator"))
             } else if (reviews.isEmpty()) {
                 Text("No reviews yet. Be the first!", style = MaterialTheme.typography.bodyMedium)
             } else {
