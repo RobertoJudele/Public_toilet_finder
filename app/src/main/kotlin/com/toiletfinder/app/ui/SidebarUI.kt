@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun SidebarLayout(
     isDarkMode: Boolean,
+    isUserLoggedIn: Boolean,
     onToggleTheme: () -> Unit,
     onScreenSelected: (String) -> Unit,
     content: @Composable () -> Unit
@@ -35,15 +36,19 @@ fun SidebarLayout(
     val sidebarBackground = if (isDarkMode) Color(0xFF2B2B2B) else Color.White
     val textColor = if (isDarkMode) Color.White else Color.Black
 
-    val buttons = listOf(
-        "Home" to "🏠",
-        "Login" to "🔐",
-        "Map" to "🗺️",
-        "Backend" to "🧪",
-        "Settings" to "⚙️",
-        "About" to "ℹ️",
-        "Logout" to "⍈"
-    )
+    val buttons = buildList {
+        add("Home" to "🏠")
+        if (!isUserLoggedIn) {
+            add("Login" to "🔐")
+        }
+        add("Map" to "🗺️")
+        add("Backend" to "🧪")
+        add("Settings" to "⚙️")
+        add("About" to "ℹ️")
+        if (isUserLoggedIn) {
+            add("Logout" to "⍈")
+        }
+    }
 
     Row(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
         // Sidebar
