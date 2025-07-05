@@ -140,6 +140,10 @@ fun ToiletDetailsSheet(
                                 text = "🕒 ${review.timestamp.toDate()}",
                                 style = MaterialTheme.typography.labelSmall
                             )
+                            Text(
+                                text ="\uD83D\uDC64 User: ${ review.userId}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
                     }
                 }
