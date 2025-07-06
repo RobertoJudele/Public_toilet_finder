@@ -43,7 +43,6 @@ fun SidebarLayout(
         }
         add("Map" to "🗺️")
         add("Backend" to "🧪")
-        add("Settings" to "⚙️")
         add("About" to "ℹ️")
         if (isUserLoggedIn) {
             add("Logout" to "⍈")
