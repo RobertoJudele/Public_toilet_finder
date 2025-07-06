@@ -118,6 +118,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx") // Cloud Firestore database.
     implementation("com.google.firebase:firebase-common-ktx") // Common Firebase utilities.
     implementation("com.google.firebase:firebase-installations-ktx") // Firebase Installations (crucial for client-side Firebase ID management).
+    testImplementation( "io.mockk:mockk:1.13.0") // or the latest version
+    androidTestImplementation ("io.mockk:mockk-android:1.13.0") // for Android tests
 
     // Glide library for image loading (used for marker icons).
     implementation("com.github.bumptech.glide:glide:4.16.0")
