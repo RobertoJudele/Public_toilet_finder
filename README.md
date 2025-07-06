@@ -115,7 +115,7 @@ Organizat prin GitHub Projects
 ## 🗺️ Diagrame
 
 •⁠  ⁠Diagrama UI flow: Map → Marker → Detalii → Recenzie / Adăugare
-
+https://drive.google.com/file/d/1xzFUeZqIEd7cJPwuD6NLHq5EU1KBsoGD/view?usp=sharing
 ---
 
 ## 🔀 Source Control & Management
