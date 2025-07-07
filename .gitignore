@@ -40,3 +40,23 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# IDE
+.idea/
+.kotlinc/
+.kotlin/
+
+# Build
+/build/
+*.log
+*.hprof
+
+# System
+.DS_Store
+Thumbs.db
+
+# Temp
+25.1.1
+git
+pip
+python
