@@ -2,24 +2,22 @@ package com.toiletfinder.app
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.toiletfinder.app.ui.AboutScreen
-import com.toiletfinder.app.ui.MapScreen
-import com.toiletfinder.app.ui.BackendTestScreen
-import com.toiletfinder.app.ui.LoginScreen
-import com.toiletfinder.app.ui.SidebarLayout
-import com.toiletfinder.app.ui.AddToiletScreen
 import com.toiletfinder.app.ui.*
-import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,40 +49,20 @@ fun ToiletFinderApp() {
     var selectedScreen by remember { mutableStateOf("Map") }
     var pendingProtectedScreen by remember { mutableStateOf<String?>(null) }
 
-    // Define color schemes for light and dark themes
-    val lightColors = lightColorScheme()
-    val darkColors = darkColorScheme()
+    val lightColors = lightTheme()
+    val darkColors = darkTheme()
 
-
-    // Color Scheme for Light Mode
-    fun lightColorScheme() = lightColorScheme(
-        primary = Color(0xFF6200EE),
-        onPrimary = Color.White,
-        surface = Color.White,
-        onSurface = Color.Black,
-        // Add other colors as needed
-    )
-
-    // Color Scheme for Dark Mode
-    fun darkColorScheme() = darkColorScheme(
-        primary = Color(0xFFBB86FC),
-        onPrimary = Color.Black,
-        surface = Color(0xFF121212),
-        onSurface = Color.White,
-        // Add other colors as needed
-    )
-
-    // Wrap your app content in MaterialTheme and switch color schemes based on isDarkMode
-    MaterialTheme(
-        colorScheme = if (isDarkMode) darkColors else lightColors
-    ) {
+    MaterialTheme(colorScheme = if (isDarkMode) darkColors else lightColors) {
         Surface(color = MaterialTheme.colorScheme.background) {
             if (selectedScreen == "Login") {
-                LoginScreen(onLoginSuccess = {
-                    currentUser = auth.currentUser
-                    selectedScreen = pendingProtectedScreen ?: "Map"
-                    pendingProtectedScreen = null
-                }, onBackClick = { selectedScreen = "Map" })
+                LoginScreen(
+                    onLoginSuccess = {
+                        currentUser = auth.currentUser
+                        selectedScreen = pendingProtectedScreen ?: "Map"
+                        pendingProtectedScreen = null
+                    },
+                    onBackClick = { selectedScreen = "Map" }
+                )
             } else {
                 SidebarLayout(
                     isDarkMode = isDarkMode,
@@ -95,7 +73,6 @@ fun ToiletFinderApp() {
                             "Logout" -> {
                                 auth.signOut()
                                 currentUser = null
-
                                 selectedScreen = "Map"
                             }
                             "AddToilet" -> {
@@ -107,26 +84,41 @@ fun ToiletFinderApp() {
                                 }
                             }
                             "Login" -> {
-                                if (auth.currentUser != null) {
-                                    selectedScreen = "Map"
-                                } else {
-                                    selectedScreen = "Login"
-                                }
+                                selectedScreen = if (auth.currentUser != null) "Map" else "Login"
                             }
-                            else -> {
-                                selectedScreen = it
-                            }
+                            else -> selectedScreen = it
                         }
                     }
-
                 ) {
                     when (selectedScreen) {
-                        "Map" -> MapScreen(onAddToiletClick = { if (currentUser == null) {
-                        selectedScreen = "Login"
-                        pendingProtectedScreen = "AddToilet"
-                    } else {
-                        selectedScreen = "AddToilet"
-                    } })
+                        "Map" -> {
+                            val context = LocalContext.current
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                MapScreen(
+                                    onAddToiletClick = {
+                                        if (currentUser == null) {
+                                            selectedScreen = "Login"
+                                            pendingProtectedScreen = "AddToilet"
+                                        } else {
+                                            selectedScreen = "AddToilet"
+                                        }
+                                    }
+                                )
+                                if (currentUser != null) {
+                                    FloatingActionButton(
+                                        onClick = {
+                                            selectedScreen = "AddToilet"
+                                            Toast.makeText(context, "Navigate to Add Toilet", Toast.LENGTH_SHORT).show()
+                                        },
+                                        modifier = Modifier
+                                            .align(Alignment.BottomEnd)
+                                            .padding(16.dp)
+                                    ) {
+                                        Icon(Icons.Default.Add, contentDescription = "Add Toilet")
+                                    }
+                                }
+                            }
+                        }
                         "Backend" -> BackendTestScreen()
                         "AddToilet" -> AddToiletScreen(onToiletAdded = { selectedScreen = "Map" })
                         "Home" -> Text("🏠 Home Screen")
@@ -139,3 +131,19 @@ fun ToiletFinderApp() {
         }
     }
 }
+
+@Composable
+fun lightTheme() = lightColorScheme(
+    primary = Color(0xFF6200EE),
+    onPrimary = Color.White,
+    surface = Color.White,
+    onSurface = Color.Black,
+)
+
+@Composable
+fun darkTheme() = darkColorScheme(
+    primary = Color(0xFFBB86FC),
+    onPrimary = Color.Black,
+    surface = Color(0xFF121212),
+    onSurface = Color.White,
+)
