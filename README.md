@@ -106,7 +106,7 @@ Organizat prin GitHub Projects
 
 ## 🎥 Demo
 
-•⁠  ⁠[Video demo](https://youtu.be/link-demo)  
+•⁠  ⁠[Video demo]([https://youtu.be/link-demo](https://youtube.com/shorts/2vCRKlZT6s8?si=KLgG8LSgzsQ0XK9u))  
 •⁠  ⁠Include: hartă, adăugare toaletă, recenzie, logout/login  
 
 ---
