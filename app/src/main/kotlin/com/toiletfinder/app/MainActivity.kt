@@ -1,5 +1,6 @@
 package com.toiletfinder.app
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -37,6 +38,30 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ToiletFinderApp()
+        }
+    }
+}
+@Composable
+fun ConditionalFab(
+    currentUser: Any?, // înlocuiește cu tipul corect, ex: FirebaseUser?
+    context: Context = LocalContext.current,
+    onFabClick: () -> Unit
+) {
+    if (currentUser != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    onFabClick()
+                    Toast.makeText(context, "Navigate to Add Toilet", Toast.LENGTH_SHORT).show()
+                }
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Toilet")
+            }
         }
     }
 }
@@ -104,19 +129,13 @@ fun ToiletFinderApp() {
                                         }
                                     }
                                 )
-                                if (currentUser != null) {
-                                    FloatingActionButton(
-                                        onClick = {
-                                            selectedScreen = "AddToilet"
-                                            Toast.makeText(context, "Navigate to Add Toilet", Toast.LENGTH_SHORT).show()
-                                        },
-                                        modifier = Modifier
-                                            .align(Alignment.BottomEnd)
-                                            .padding(16.dp)
-                                    ) {
-                                        Icon(Icons.Default.Add, contentDescription = "Add Toilet")
+                                ConditionalFab(
+                                    currentUser = currentUser,
+                                    onFabClick = {
+                                        selectedScreen = "AddToilet"
                                     }
-                                }
+                                )
+
                             }
                         }
                         "Backend" -> BackendTestScreen()
